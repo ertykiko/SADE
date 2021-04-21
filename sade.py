@@ -40,7 +40,7 @@ def simulated_annealing(initial_state):
 
 def get_cost(state):
     """Calculates cost of the argument state for your solution."""
-        
+
     raise NotImplementedError
 
 
@@ -49,12 +49,24 @@ def get_neighbors(state):
     raise NotImplementedError
 
 
+def get_total_cost(routes,cli_arr,war_arr):
+        for warehouse in range(16):
+                for client in range(20)
+                        if routes[warehouse,client] == 0:
+                                break
+                        if client == 1 :
+                                #calculate storage to 1st store
+                        else 
+                                #cost =+ calculate_cost_between_stores
+                        
+        return cost 
+    raise NotImplementedError    
 #################
 
 
 #####--- GUI Implementation-----###
 
-""" 
+"""
 root = tk.Tk()
 #def button_storage():
 
@@ -91,10 +103,9 @@ print("clients")
 ####################
 
 ####initial state
-clients_coord = clients_df[['XX','YY']]
 
-
-c_coord_arr = clients_coord.to_numpy()
+cli_arr = clients_df[['XX' , 'YY']].to_numpy()
+war_arr = warehouses_df[['XX' , 'YY']].to_numpy()
  
 
 #print(c_coord_arr)
@@ -106,12 +117,23 @@ c_coord_arr = clients_coord.to_numpy()
 ### Array
 ### 1st position is the store
 ### 2nd position is the dimension ---- 0 - XX and 1 - YY
-print(c_coord_arr[1, ])
-print(c_coord_arr[0,])
-distance = np.linalg.norm(c_coord_arr[1,] - c_coord_arr[0,])
+print(war_arr[1, ])
+print(cli_arr[0,] )
+#distance = np.linalg.norm(cli_arr[1,] - cli_arr[0,])
+distance = np.linalg.norm(war_arr[1, ] - cli_arr[0, ])
+
+### In routes store 1 is 1 but in cli_arr is in position 0 
+
+routes = np.zeros((16,20)) # replace with empty matrix with 16 rows and then append collumns at the end 
+                                # advantage we dont have to go through the array add/drop a client from a warehouse
+
+#print(routes)
+
 
 print(distance)
 #16 vetores de 20 posições
+
+
 
 
 
