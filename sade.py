@@ -56,15 +56,16 @@ def get_neighbors(state):
 
 """ 
 root = tk.Tk()
+#def button_storage():
 
-def click_storage():
-        label = tk.Label(root, text="Magic has been made")
-        label.pack()
+def click_storage(id):
+        label = tk.Label(root, text="Armazem" )
 
 
 w = tk.Label(root, text="Hello Tkinter!")
 k = tk.Label(root, text="My name is Rodas Rolamentos")
-but = tk.Button(root, text="Adicionar armazem", command=click_storage)
+
+but = tk.Button(root, text="Armazem", command=click_storage)
 
 k.grid(row=0, column=0)
 w.grid(row=1, column=0)
