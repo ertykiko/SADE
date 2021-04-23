@@ -120,46 +120,14 @@ print(cli_arr[0,] )
 
 ### In routes store 1 is 1 but in cli_arr is in position 0 
 
-###################################################################################
-routes = [[] for i in range(0,16)] 
-vector_stores=list(range(0,86))
-random.shuffle(vector_stores)
-print(vector_stores)
+###Initialize Routes Array 
 
-j=0
-for i,store in enumerate(vector_stores):
-
-    
-    print(j)
-    if i%16==0 and i!=0:
-        
-        j=0
-    routes[j].append(store)
-    j=j+1
-
-print(routes[0])
-print(routes[1])
-print(routes[2])
-print(routes[3])
-print(routes[4])
-print(routes[5])
-print(routes[6])
-print(routes[7])
-print(routes[8])
-print(routes[9])
-print(routes[10])
-print(routes[11])
-print(routes[12])
-print(routes[13])
-print(routes[14])
-print(routes[15])
-#######################################################################################################
+routes = np.empty((16,20))  # replace with empty matrix with 16 rows and then append collumns at the end 
+                            # advantage we dont have to go through the array add/drop a client from a warehouse
+                            #16 vetores de 20 posições
+routes[:] = np.NaN
 
 
-
-
-print(distance)
-#16 vetores de 20 posições
 
 ####To-do 
     # Manually add stores to routes vector and test get total cost function
