@@ -49,18 +49,18 @@ def get_neighbors(state):
     raise NotImplementedError
 
 
-def get_total_cost(routes,cli_arr,war_arr):
-        for warehouse in range(16):
-                for client in range(20)
-                        if routes[warehouse,client] == 0:
-                                break
-                        if client == 1 :
-                                #calculate storage to 1st store
-                        else 
-                                #cost =+ calculate_cost_between_stores
+#def get_total_cost(routes,cli_arr,war_arr):
+   #     for warehouse in range(16):
+   #           for client in range(20):
+  #                     if routes[warehouse,client] == 0:
+  #                             break
+  #                    if client == 1 :
+  #                              #calculate storage to 1st store
+   #                     else 
+  #                              #cost =+ calculate_cost_between_stores
                         
-        return cost 
-    raise NotImplementedError    
+ #       return cost 
+ #   raise NotImplementedError    
 #################
 
 
@@ -124,10 +124,42 @@ distance = np.linalg.norm(war_arr[1, ] - cli_arr[0, ])
 
 ### In routes store 1 is 1 but in cli_arr is in position 0 
 
-routes = np.zeros((16,20)) # replace with empty matrix with 16 rows and then append collumns at the end 
-                                # advantage we dont have to go through the array add/drop a client from a warehouse
+###################################################################################
+routes = [[] for i in range(0,16)] 
+vector_stores=list(range(0,86))
+random.shuffle(vector_stores)
+print(vector_stores)
 
-#print(routes)
+j=0
+for i,store in enumerate(vector_stores):
+
+    
+    print(j)
+    if i%16==0 and i!=0:
+        
+        j=0
+    routes[j].append(store)
+    j=j+1
+
+print(routes[0])
+print(routes[1])
+print(routes[2])
+print(routes[3])
+print(routes[4])
+print(routes[5])
+print(routes[6])
+print(routes[7])
+print(routes[8])
+print(routes[9])
+print(routes[10])
+print(routes[11])
+print(routes[12])
+print(routes[13])
+print(routes[14])
+print(routes[15])
+#######################################################################################################
+
+
 
 
 print(distance)
