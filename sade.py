@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import random
 import math
+from timeit import default_timer as timer
+
 
 ###-----Simulated Annealing
 
@@ -49,10 +51,10 @@ def get_neighbors(state):
 
 
 def get_total_cost(routes, cli_arr, war_arr):
+      start = timer()
       cost=0
       for warehouse in range(16):
             for client in range(20):
-                print(len(routes[warehouse]))
                 if len(routes[warehouse]) == client  :
                     print("Reached the end of the warehouse" + str(warehouse))
                # if math.isnan(routes[warehouse][client]) == True :
@@ -75,6 +77,8 @@ def get_total_cost(routes, cli_arr, war_arr):
                     print("Client : " + str(client))
                     cost += get_distance(cli_arr[routes[warehouse][client], ], cli_arr[routes[warehouse][client-1], ])
                     #cost =+ calculate_cost_between_stores
+      end = timer()
+      print("Time elapsed: " + str(end - start))
       return cost
     #raise NotImplementedError
 
@@ -82,7 +86,7 @@ def get_total_cost(routes, cli_arr, war_arr):
 def get_distance(location1, location2):
     #Example -- distance = np.linalg.norm(war_arr[1, ] - cli_arr[0, ])
     distance = np.linalg.norm(location1 - location2)
-    print(distance)
+    #print(distance)
     return distance 
 
 #################
