@@ -56,22 +56,26 @@ def get_total_cost(routes, cli_arr, war_arr):
       for warehouse in range(16):
             for client in range(20):
                 if len(routes[warehouse]) == client  :
-                    print("Reached the end of the warehouse" + str(warehouse))
+                    
                # if math.isnan(routes[warehouse][client]) == True :
                     
                     # Finished the end of the route or no stores in route
-                    if client == 1:
+                    if client == 0:
                         #route is empty --  no cost
                         break
                     else :
                         #is the last store
                         #calculate cost from last shop to the warehouse
+                        print("Cleint : " + str(client) +
+                              " - Last store to warehouse")
                         cost += get_distance( cli_arr[routes[warehouse][client-1],] ,war_arr[warehouse,])
+                        print("Reached the end of the warehouse" + str(warehouse))
                         break
                     
-                if client == 1:
+                if client == 0:
                     #first store calculate to warehouse
                     #calculate storage to 1st store
+                    print("Cleint : " + str(client) + " - First store to warehouse" )
                     cost += get_distance(war_arr[warehouse, ], cli_arr[routes[warehouse] [client], ])
                 else:
                     print("Client : " + str(client))
