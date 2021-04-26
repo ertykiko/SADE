@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import random
 import math
-#import tkinter as tk
 
 ###-----Simulated Annealing
 
@@ -50,10 +49,14 @@ def get_neighbors(state):
 
 
 def get_total_cost(routes, cli_arr, war_arr):
+      cost=0
       for warehouse in range(16):
             for client in range(20):
-
-                if numpy.isnan(routes[warehouse,client]) == True :
+                print(len(routes[warehouse]))
+                if len(routes[warehouse]) == client  :
+                    print("Reached the end of the warehouse" + str(warehouse))
+               # if math.isnan(routes[warehouse][client]) == True :
+                    
                     # Finished the end of the route or no stores in route
                     if client == 1:
                         #route is empty --  no cost
@@ -61,26 +64,25 @@ def get_total_cost(routes, cli_arr, war_arr):
                     else :
                         #is the last store
                         #calculate cost from last shop to the warehouse
-                        cost =+ get_distance( cli_arr[routes[warehouse,client-1],] ,war_arr[warehouse,])
+                        cost += get_distance( cli_arr[routes[warehouse][client-1],] ,war_arr[warehouse,])
                         break
                     
                 if client == 1:
                     #first store calculate to warehouse
                     #calculate storage to 1st store
-                    cost = + \
-                        get_distance(
-                            war_arr[warehouse, ], cli_arr[routes[warehouse, client], ])
+                    cost += get_distance(war_arr[warehouse, ], cli_arr[routes[warehouse] [client], ])
                 else:
-                    cost = + \
-                        get_distance(
-                            cli_arr[routes[warehouse, client], ], cli_arr[routes[warehouse, client-1], ])
+                    print("Client : " + str(client))
+                    cost += get_distance(cli_arr[routes[warehouse][client], ], cli_arr[routes[warehouse][client-1], ])
                     #cost =+ calculate_cost_between_stores
+      return cost
     #raise NotImplementedError
 
 
 def get_distance(location1, location2):
     #Example -- distance = np.linalg.norm(war_arr[1, ] - cli_arr[0, ])
     distance = np.linalg.norm(location1 - location2)
+    print(distance)
     return distance 
 
 #################
@@ -155,11 +157,13 @@ print(routes[14])
 print(routes[15])
 #######################################################################################################
 
+total_cost = 0
 
-
-
-print(distance)
 #16 vetores de 20 posições
+total_cost = get_total_cost(routes,cli_arr,war_arr)
+
+
+print("Total cost is " + str(total_cost) )
 
 ####To-do 
     # Manually add stores to routes vector and test get total cost function
