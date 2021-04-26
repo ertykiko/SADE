@@ -66,8 +66,8 @@ def get_total_cost(routes, cli_arr, war_arr):
                     else :
                         #is the last store
                         #calculate cost from last shop to the warehouse
-                        print("Cleint : " + str(client) +
-                              " - Last store to warehouse")
+                        print("Client : " + str(client) +
+                               " - Last store to warehouse")
                         cost += get_distance( cli_arr[routes[warehouse][client-1],] ,war_arr[warehouse,])
                         print("Reached the end of the warehouse" + str(warehouse))
                         break
@@ -75,7 +75,7 @@ def get_total_cost(routes, cli_arr, war_arr):
                 if client == 0:
                     #first store calculate to warehouse
                     #calculate storage to 1st store
-                    print("Cleint : " + str(client) + " - First store to warehouse" )
+                    print("Client : " + str(client) + " - First store to warehouse" )
                     cost += get_distance(war_arr[warehouse, ], cli_arr[routes[warehouse] [client], ])
                 else:
                     print("Client : " + str(client))
@@ -100,16 +100,19 @@ def check_routes(routes):
 def initialize_routes(routes):
     vector_stores = list(range(0, 86))
     random.shuffle(vector_stores)
-    print(vector_stores)
+    #print(vector_stores)
+    i = 0
     j = 0
-    for i, store in enumerate(vector_stores):
-
-        print(j)
-        if i % 16 == 0 and i != 0:
-
+    while i<len(vector_stores):
+        if j % 16 == 0 and i != 0:
             j = 0
-        routes[j].append(store)
-        j = j+1
+        print('Checking store ', i, 'with demand ',cli_dem[vector_stores[i]] ,'to append on warehouse ',j, 'with free capacity ', war_cap[j]-sum(cli_dem[routes[j]]))
+        if war_cap[j]>=sum(cli_dem[routes[j]])+cli_dem[vector_stores[i]]:
+            routes[j].append(vector_stores[i])
+            print('Store', i,'with index',vector_stores[i],'attributed to WH',j,'\n')
+            i=i+1
+        j=j+1 
+            
 #################
 
 
@@ -118,8 +121,9 @@ def initialize_routes(routes):
 clients_df = pd.read_csv("clients.txt",sep=';',header=0)
 warehouses_df = pd.read_csv("warehouses.txt",sep=';',header=0)
 cli_arr = clients_df[['XX', 'YY']].to_numpy()
+cli_dem = clients_df[['DEMAND']].to_numpy()
 war_arr = warehouses_df[['XX', 'YY']].to_numpy()
-
+war_cap = warehouses_df[['CAPACITY']].to_numpy()
 
 """ Debug
 print("warehouses")
