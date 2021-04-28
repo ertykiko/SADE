@@ -75,22 +75,23 @@ def get_total_cost(routes, cli_arr, war_arr):
                     else :
                         #is the last store
                         #calculate cost from last shop to the warehouse
-                        print("Client : " + str(client) +
-                               " - Last store to warehouse")
+                       # print("Client : " + str(client) +
+                         #      " - Last store to warehouse")
                         cost += get_distance( cli_arr[routes[warehouse][client-1],] ,war_arr[warehouse,])
-                        print("Reached the end of the warehouse" + str(warehouse))
+                       # print("Reached the end of the warehouse" + str(warehouse))
                         break
                     
                 if client == 0:
                     #first store calculate to warehouse
                     #calculate storage to 1st store
-                    print("Client : " + str(client) + " - First store to warehouse" )
+                    #print("Client : " + str(client) + " - First store to warehouse" )
                     cost += get_distance(war_arr[warehouse, ], cli_arr[routes[warehouse] [client], ])
                 else:
-                    print("Client : " + str(client))
+                   # print("Client : " + str(client))
                     cost += get_distance(cli_arr[routes[warehouse][client], ], cli_arr[routes[warehouse][client-1], ])
                     #cost =+ calculate_cost_between_stores
-      
+      end = timer()
+     # print("Time elapsed: " + str(end - start))
       return cost
     #raise NotImplementedError
 
@@ -108,37 +109,57 @@ def check_routes(routes):
 def initialize_routes(routes,war_arr,cli_arr,cli_dem,war_cap):
     vector_stores = list(range(0, 86))
     #random.shuffle(vector_stores)
-    #print(vector_stores)
-    i = 0
-    j = 0
-    while i<len(vector_stores):
-        if j % 16 == 0 and i != 0:
-            j = 0
-        print('Checking store ',vector_stores[i], 'with demand ',cli_dem[vector_stores[i]] ,'to append on warehouse ',j, 'with free capacity ', war_cap[j]-sum(cli_dem[routes[j]]))
-        if war_cap[j]>=sum(cli_dem[routes[j]])+cli_dem[vector_stores[i]]:
-            routes[j].append(vector_stores[i])
-            print('Store', vector_stores[i],'with index',vector_stores[i],'attributed to WH',j,'\n')
+    print(vector_stores)
+    # i = 0
+    # j = 0
+    # while i<len(vector_stores):
+    #     if j % 16 == 0 and i != 0:
+    #         j = 0
+    #     print('Checking store ', i, 'with demand ',cli_dem[vector_stores[i]] ,'to append on warehouse ',j, 'with free capacity ', war_cap[j]-sum(cli_dem[routes[j]]))
+        
+    #     if war_cap[j]>=sum(cli_dem[routes[j]])+cli_dem[vector_stores[i]]:
+    #         routes[j].append(vector_stores[i])
+    #         print('Store', i,'with index',vector_stores[i],'attributed to WH',j,'\n')
+    #         i=i+1
+    #     j=j+1 
+
+    free_stores=86
+
+    current_coord = war_arr
+    while free_stores>0 : 
+        dist_w_s = np.asarray([np.linalg.norm(current_coord[i]-cli_arr,axis=1) for i in range(16)])
+        print(np.array(dist_w_s).shape)
+        i=0
+        while i<16:
+            closest_store = np.argmin(dist_w_s[i,:])
+            print(closest_store)
+            if war_cap[i]>=sum(cli_dem[routes[i]])+cli_dem[vector_stores[closest_store]]:
+                store_index = vector_stores.pop(closest_store)
+                routes[i].append(store_index)
+                free_stores=free_stores-1
+                dist_w_s = np.delete(dist_w_s,closest_store,1)
+                current_coord[i]=cli_arr[closest_store]
+                cli_arr= np.delete(cli_arr,closest_store,0)
+            else: print('Not enough capacity')
+             
+            if free_stores==0:break
+            
             i=i+1
-        j=j+1 
-    war_distance[16]={0}
-    for stores in vector_stores:
-        for warehouse in range(16):
-            if(warehouse == 0 ):
-                distance =  get_distance(war_arr[warehouse, ], cli_arr[stores,])
-                choice = warehouse
-            else :
-                new_distance =  get_distance(war_arr[warehouse, ], cli_arr[stores, ])
-                if(new_distance < distance):
-                    distance = new_distance
-                    choice = warehouse
-        if(distance < war_distance[choice] or war_distance[choice] == 0) :
-            #Do nothing    
-            war_distance[choice]=distance
-
-              
+            
+            
+        
 
 
 
+      
+    
+             
+            
+
+
+
+        
+            
 #################
 
 
@@ -180,18 +201,8 @@ print(war_arr)
 ###################################################################################
 routes = [[] for i in range(0,16)] 
 
-
-war_distance = np.zeros(16,int)
-
-print(war_distance)
-war_distance[0]=9
-print(war_distance)
-print(war_distance[0])
-
-
-
-#initialize_routes(routes)
-#check_routes(routes)
+initialize_routes(routes,war_arr,cli_arr,cli_dem,war_cap)
+check_routes(routes)
 
 
 #######################################################################################################
