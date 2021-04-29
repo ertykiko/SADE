@@ -124,22 +124,24 @@ def initialize_routes(routes,war_arr,cli_arr,cli_dem,war_cap):
     #     j=j+1 
 
     free_stores=86
+    cli_array = cli_arr
 
     current_coord = war_arr
     while free_stores>0 : 
-        dist_w_s = np.asarray([np.linalg.norm(current_coord[i]-cli_arr,axis=1) for i in range(16)])
-        print(np.array(dist_w_s).shape)
+        dist_w_s = np.asarray([np.linalg.norm(current_coord[i]-cli_array,axis=1) for i in range(16)]) ##Calculate a 16 by 86 array of the distance of each shop to the warehouses
+        #print("Dist Warehouse to Store ")
+        print(np.array(dist_w_s).shape) ##Check dimensions of distance w_s array
         i=0
         while i<16:
-            closest_store = np.argmin(dist_w_s[i,:])
-            print(closest_store)
-            if war_cap[i]>=sum(cli_dem[routes[i]])+cli_dem[vector_stores[closest_store]]:
-                store_index = vector_stores.pop(closest_store)
-                routes[i].append(store_index)
-                free_stores=free_stores-1
-                dist_w_s = np.delete(dist_w_s,closest_store,1)
-                current_coord[i]=cli_arr[closest_store]
-                cli_arr= np.delete(cli_arr,closest_store,0)
+            closest_store = np.argmin(dist_w_s[i,:]) #Check the closest store for the give warehouse -- i
+            print("Closest store : " + str(closest_store))
+            if war_cap[i]>=sum(cli_dem[routes[i]])+cli_dem[vector_stores[closest_store]]: #Check if capacity allows for store to be assigned to warehouse
+                store_index = vector_stores.pop(closest_store)  ## Remove 
+                routes[i].append(store_index)  ##append store to warehouse route
+                free_stores=free_stores-1 ##One less free store
+                dist_w_s = np.delete(dist_w_s,closest_store,1)  ##Delete distance from w_s array
+                current_coord[i]=cli_array[closest_store] 
+                cli_array= np.delete(cli_array,closest_store,0) ##Delete form cli_array
             else: print('Not enough capacity')
              
             if free_stores==0:break
@@ -202,7 +204,7 @@ print(war_arr)
 routes = [[] for i in range(0,16)] 
 
 initialize_routes(routes,war_arr,cli_arr,cli_dem,war_cap)
-check_routes(routes)
+#check_routes(routes)
 
 
 #######################################################################################################
@@ -210,13 +212,13 @@ check_routes(routes)
 #total_cost = 0
 
 #16 vetores de 20 posições
-#total_cost = get_total_cost(routes,cli_arr,war_arr)
+total_cost = get_total_cost(routes,cli_arr,war_arr)
 
 
-#print("Total cost is " + str(total_cost) )
+print("Total cost is " + str(total_cost) )
 
-#end = timer()
-#print("Time elapsed: " + str(end - start))
+end = timer()
+print("Time elapsed: " + str(end - start))
 ####To-do 
     # Manually add stores to routes vector and test get total cost function
 
