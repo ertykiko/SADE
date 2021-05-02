@@ -121,7 +121,7 @@ def initialize_routes(routes,war_arr,cli_arr,cli_dem,war_cap):
         
             x=np.unravel_index(dist_w_s.argmin(), dist_w_s.shape)[0] ##X (Warehouse) index of the best solution of all possibilities
             y=np.unravel_index(dist_w_s.argmin(), dist_w_s.shape)[1] ##Y (Store) index of the best solution of all possibilities
-            print("Best possibility is store: ",y,"   to warehouse:",x,'-----> Dist:',np.min(dist_w_s))
+            print("Best possibility is store: ",vector_stores[y],"   to warehouse:",vector_wh[x],'-----> Dist:',np.min(dist_w_s))
             print('Checking store ', y, 'with demand ',cli_dem[vector_stores[y]] ,'to append on warehouse ',x, 'with capacity ', war_cap_array[x],'and the sum of stores: ',sum(cli_dem[copy_routes[x]]),'therefore free:',war_cap_array[x]-sum(cli_dem[copy_routes[x]]))
             
             if np.all(dist_w_s == dist_w_s[0,0])==1: ##If there is not a best solution that fits the Warehouses exits loop
@@ -210,11 +210,14 @@ total_cost = get_total_cost(routes,cli_arr,war_arr)
 print("Total cost is " + str(total_cost) )
 
 end = timer()
-print("Time elapsed: " + str(end - start))
-####To-do 
-    # Manually add stores to routes vector and test get total cost function
+
 for x in range(16):
      print(war_cap[x]-sum(cli_dem[routes[x]]))
+print("Time elapsed: " + str(end - start))
+
+####To-do 
+    # Manually add stores to routes vector and test get total cost function
+
 
 
 
