@@ -106,8 +106,8 @@ def initialize_routes(routes,war_arr,cli_arr,cli_dem,war_cap):
     vector_stores = list(range(0, 86)) ##Create list with indexes of stores same during function
     print(vector_stores)
     free_stores=86 ##Number of stores not assigned to a warehouse
-    cli_array = cli_arr ##Coordinates of stores
-    current_coord = war_arr ##Initial coordinates (warehouses)
+    cli_array = np.copy(cli_arr) ##Coordinates of stores
+    current_coord =np.copy(war_arr) ##Initial coordinates (warehouses)
     copy_routes= [[] for i in range(0,16)] ##Make a copy of routes to update after an iteration
     
     while free_stores>0 :
@@ -199,7 +199,7 @@ routes = [[] for i in range(0,16)]
 initialize_routes(routes,war_arr,cli_arr,cli_dem,war_cap)
 check_routes(routes)
 
-war_arr = warehouses_df[['XX', 'YY']].to_numpy() ##Get the values again of the coordinates of the warehouses
+#war_arr = warehouses_df[['XX', 'YY']].to_numpy() ##Get the values again of the coordinates of the warehouses
 #######################################################################################################
 #total_cost = 0
 
