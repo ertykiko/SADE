@@ -215,6 +215,9 @@ for x in range(16):
      print(war_cap[x]-sum(cli_dem[routes[x]]))
 print("Time elapsed: " + str(end - start))
 
+
+print("Routes :")
+check_routes(routes)
 ####To-do 
     # Manually add stores to routes vector and test get total cost function
 
