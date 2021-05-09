@@ -4,15 +4,16 @@ import random
 import math
 import copy
 from timeit import default_timer as timer
+from geneticalgorithm import geneticalgorithm as ga
 
 
 ###-----Simulated Annealing
 
 def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
     """Peforms simulated annealing to find a solution"""
-    initial_temp = 100
+    initial_temp = 120
     final_temp = 1
-    alpha = 0.01
+    alpha = 0.005
     #k=1.380649*(10**-23)
     current_temp = initial_temp
 
@@ -22,38 +23,37 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
 
     iteration = 1
     bad = 0
+    no_diference = 0
 
     while current_temp > final_temp:
         print("------------------------------------------------------------------------------------------------------------")
         ##Random number from 0-# to select swap or append
-        rand_func = np.random.randint(0, 6)
+        rand_func = np.random.randint(0, 3)
         if rand_func == 0:
-            #print("Append")
-            neighbor = get_neighbors_random_append(
+            print("Choise is " + str(rand_func) + " so : Swap")
+            neighbor = get_neighbors_random_swap(
                 solution, cli_dem, war_cap, war_arr, cli_arr)
         if rand_func != 0:
-            #print("Choise is " + str(rand_func) + " so : Swap")
-            neighbor = get_neighbors_random_swap(
+            print("Choise is " + str(rand_func) + " so : Append")
+            neighbor = get_neighbors_random_append(
                 solution, cli_dem, war_cap, war_arr, cli_arr)
         
         if neighbor != 0:
-            if get_total_cost(solution, cli_arr, war_arr) < 900:
-                print("FOUNDIT**********************************", solution)
-                break
-
             # Check if neighbor is best so far
-            cost_diff = get_total_cost(
-                neighbor, cli_arr, war_arr) - get_total_cost(solution, cli_arr, war_arr)
+            
+            cost_diff = get_total_cost(neighbor, cli_arr, war_arr) - get_total_cost(solution, cli_arr, war_arr)
+
             print("------------------------COST DIFF: ", cost_diff)
             print("Neighbor cost is : " +
                   str(get_total_cost(neighbor, cli_arr, war_arr)))
 
             # if the new solution is better, accept it
             if cost_diff <= 0:
-                if cost_diff == 0
-                    no_diference =+
+                if cost_diff == 0:
+                    no_diference += 1
+                
                 print('Improved')
-                print("sol cost is : " + str(get_total_cost(solution, cli_arr, war_arr)))
+                print("Solution cost is : " + str(get_total_cost(solution, cli_arr, war_arr)))
                 solution = neighbor
                 #print("Neighbor cost is : " +
                 #      str(get_total_cost(neighbor, cli_arr, war_arr)))
@@ -78,9 +78,14 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
 
     print("Finished Simulated Annealing")
     print("Number of iterations : " + str(iteration) +
-          "| Number of bad accepts : " + str(bad))
+          "| Number of bad accepts : " + str(bad) + "| Number of no improvement's :" + str(no_diference))
 
     return solution
+
+
+def get_cost_ga(bitstring, cli_dem, war_cap, war_arr, cli_arr):
+    raise NotImplemented
+
 
 
 def get_neighbors_random_swap(route, cli_dem, war_cap, war_arr, cli_arr):
@@ -191,7 +196,6 @@ def get_total_cost(routes, cli_arr, war_arr):
 
     # print("Time elapsed: " + str(end - start))
     return cost
-#raise NotImplementedError
 
 
 def get_distance(location1, location2):
@@ -310,6 +314,8 @@ def initialize_routes(routes, war_arr, cli_arr, cli_dem, war_cap):
             break  # No more stores to assign --> end of iterations
         print(routes)
 
+def convert_to_bitstring(routes):
+    raise NotImplementedError
 
 ##----Import data from CSV----##
 start = timer()
@@ -336,6 +342,11 @@ initial_cost = get_total_cost(routes, cli_arr, war_arr)
 
 
 print("Initial cost is " + str(initial_cost))
+
+###Get initial solution in a 86 position vector 
+#ga_routes = [[] for i in range(0, 16)]
+#model = ga(function = get_total_cost,dimension=86,variable_boundaries=ga_routes)
+
 
 final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr)
 
