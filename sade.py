@@ -27,6 +27,7 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
 
     while current_temp > final_temp:
         print("------------------------------------------------------------------------------------------------------------")
+        
         ##Random number from 0-# to select swap or append
         rand_func = np.random.randint(0, 3)
         if rand_func == 0:
@@ -55,9 +56,7 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
                 print('Improved')
                 print("Solution cost is : " + str(get_total_cost(solution, cli_arr, war_arr)))
                 solution = neighbor
-                #print("Neighbor cost is : " +
-                #      str(get_total_cost(neighbor, cli_arr, war_arr)))
-                #break
+
             # if the new solution is not better, accept it with a probability of e^(-cost/temp)
             else:
                 rand = random.uniform(0, 1)
@@ -78,7 +77,7 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
 
     print("Finished Simulated Annealing")
     print("Number of iterations : " + str(iteration) +
-          "| Number of bad accepts : " + str(bad) + "| Number of no improvement's :" + str(no_diference))
+          "| Number of bad accepts : " + str(bad) )
 
     return solution
 
@@ -87,27 +86,29 @@ def get_cost_ga(bitstring, cli_dem, war_cap, war_arr, cli_arr):
     raise NotImplemented
 
 
-
 def get_neighbors_random_swap(route, cli_dem, war_cap, war_arr, cli_arr):
     """Returns neighbors of the argument state for your solution."""
     new_route = copy.deepcopy(route)
     ##Find target warehouse
     target_warehouse = np.random.randint(0, 16, 2)
-    if route[target_warehouse[0]] and route[target_warehouse[1]]:
-        #print(target_warehouse)
+    if route[target_warehouse[0]] and route[target_warehouse[1]] and target_warehouse[0] != target_warehouse[1]:
+        print(target_warehouse)
         index_s0 = np.random.randint(0, len(route[target_warehouse[0]]))
         index_s1 = np.random.randint(0, len(route[target_warehouse[1]]))
         target_store0 = route[target_warehouse[0]][index_s0]
         target_store1 = route[target_warehouse[1]][index_s1]
-        #print("index store 0", index_s0, "  ", target_store0)
-        #print("index store 1", index_s1, "  ", target_store1)
+        #print("GONNA CHECK IF I CAN SWAP STORE ", target_store0, "FROM WAREHOUSE ",
+             # target_warehouse[0], "WITH STORE ", target_store1, "FROM WAREHOUSE ", target_warehouse[1])
         if swap_stores(target_warehouse[0], target_warehouse[1], index_s0, index_s1, cli_dem, war_cap, new_route):
+            #print("IT IS POSSIBLE, GONNA CHANGE AND ORDER IT")
             new_route[target_warehouse[0]] = check_order(
                 new_route[target_warehouse[0]], war_arr[target_warehouse[0]], cli_arr)
             new_route[target_warehouse[1]] = check_order(
                 new_route[target_warehouse[1]], war_arr[target_warehouse[1]], cli_arr)
-            #print("ajsnosiudnv ", new_route)
-        return new_route
+            return new_route
+
+        else:
+            return 0
     else:
         return 0
 
@@ -116,19 +117,23 @@ def get_neighbors_random_append(route, cli_dem, war_cap, war_arr, cli_arr):
     new_route = copy.deepcopy(route)
     ##Find target warehouse
     target_warehouse = np.random.randint(0, 16, 2)
-    if route[target_warehouse[0]]:
-        #print(target_warehouse)
+    if route[target_warehouse[0]] and target_warehouse[0] != target_warehouse[1]:
+        print(target_warehouse)
         index_s0 = np.random.randint(0, len(route[target_warehouse[0]]))
         target_store0 = route[target_warehouse[0]][index_s0]
-
+        #print("GONNA CHECK IF I CAN APPEND STORE ",
+             # target_store0, "TO WAREHOUSE ", target_warehouse[1])
         if war_cap[target_warehouse[1]] >= sum(cli_dem[route[target_warehouse[1]]])+cli_dem[target_store0]:
+            #print("IT IS POSSIBLE, GONNA CHANGE AND ORDER IT")
             store = new_route[target_warehouse[0]].pop(index_s0)
             new_route[target_warehouse[1]].append(store)
             new_route[target_warehouse[0]] = check_order(
                 new_route[target_warehouse[0]], war_arr[target_warehouse[0]], cli_arr)
             new_route[target_warehouse[1]] = check_order(
                 new_route[target_warehouse[1]], war_arr[target_warehouse[1]], cli_arr)
-        return new_route
+            return new_route
+        else:
+            return 0
     else:
         return 0
 
