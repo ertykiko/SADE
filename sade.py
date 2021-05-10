@@ -9,9 +9,9 @@ from geneticalgorithm import geneticalgorithm as ga
 
 ###-----Simulated Annealing
 
-def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
+def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr,probabilty,magnitude):
     """Peforms simulated annealing to find a solution"""
-    initial_temp = 120
+    initial_temp = 100
     final_temp = 1
     alpha = 0.005
     #k=1.380649*(10**-23)
@@ -25,17 +25,19 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
     bad = 0
     no_diference = 0
 
+
+
     while current_temp > final_temp:
-        print("------------------------------------------------------------------------------------------------------------")
+        #print("------------------------------------------------------------------------------------------------------------")
         
         ##Random number from 0-# to select swap or append
-        rand_func = np.random.randint(0, 3)
+        rand_func = np.random.randint(0, np.around(1/probabilty,decimals=0))
         if rand_func == 0:
-            print("Choise is " + str(rand_func) + " so : Swap")
+            #print("Choise is " + str(rand_func) + " so : Swap")
             neighbor = get_neighbors_random_swap(
                 solution, cli_dem, war_cap, war_arr, cli_arr)
         if rand_func != 0:
-            print("Choise is " + str(rand_func) + " so : Append")
+            #print("Choise is " + str(rand_func) + " so : Append")
             neighbor = get_neighbors_random_append(
                 solution, cli_dem, war_cap, war_arr, cli_arr)
         
@@ -44,9 +46,8 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
             
             cost_diff = get_total_cost(neighbor, cli_arr, war_arr) - get_total_cost(solution, cli_arr, war_arr)
 
-            print("------------------------COST DIFF: ", cost_diff)
-            print("Neighbor cost is : " +
-                  str(get_total_cost(neighbor, cli_arr, war_arr)))
+            #print("------------------------COST DIFF: ", cost_diff)
+            #print("Neighbor cost is : " +    str(get_total_cost(neighbor, cli_arr, war_arr)))
 
             # if the new solution is better, accept it
             if cost_diff <= 0:
@@ -60,10 +61,10 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr):
             # if the new solution is not better, accept it with a probability of e^(-cost/temp)
             else:
                 rand = random.uniform(0, 1)
-                mathio = math.exp(-cost_diff*10 / current_temp)
-                #print("RAND:", rand, " <  MATH:", mathio)
+                mathio = math.exp(-cost_diff*magnitude / current_temp)
+                
 
-                if rand < mathio:
+                if rand < mathio and cost_diff < 200:
 
                     print("Accepting Worse Solution")
                     bad += 1
@@ -92,15 +93,12 @@ def get_neighbors_random_swap(route, cli_dem, war_cap, war_arr, cli_arr):
     ##Find target warehouse
     target_warehouse = np.random.randint(0, 16, 2)
     if route[target_warehouse[0]] and route[target_warehouse[1]] and target_warehouse[0] != target_warehouse[1]:
-        print(target_warehouse)
+        #print(target_warehouse)
         index_s0 = np.random.randint(0, len(route[target_warehouse[0]]))
         index_s1 = np.random.randint(0, len(route[target_warehouse[1]]))
-        target_store0 = route[target_warehouse[0]][index_s0]
-        target_store1 = route[target_warehouse[1]][index_s1]
-        #print("GONNA CHECK IF I CAN SWAP STORE ", target_store0, "FROM WAREHOUSE ",
-             # target_warehouse[0], "WITH STORE ", target_store1, "FROM WAREHOUSE ", target_warehouse[1])
-        if swap_stores(target_warehouse[0], target_warehouse[1], index_s0, index_s1, cli_dem, war_cap, new_route):
-            #print("IT IS POSSIBLE, GONNA CHANGE AND ORDER IT")
+        if swap_stores(target_warehouse[0], target_warehouse[1], index_s0, index_s1, cli_dem, war_cap, new_route):#Access if there is space in the waarehouse
+            
+            ## Re-order both warehouses routes based on the smallest distance
             new_route[target_warehouse[0]] = check_order(
                 new_route[target_warehouse[0]], war_arr[target_warehouse[0]], cli_arr)
             new_route[target_warehouse[1]] = check_order(
@@ -118,23 +116,24 @@ def get_neighbors_random_append(route, cli_dem, war_cap, war_arr, cli_arr):
     ##Find target warehouse
     target_warehouse = np.random.randint(0, 16, 2)
     if route[target_warehouse[0]] and target_warehouse[0] != target_warehouse[1]:
-        print(target_warehouse)
+        #print(target_warehouse)
         index_s0 = np.random.randint(0, len(route[target_warehouse[0]]))
         target_store0 = route[target_warehouse[0]][index_s0]
         #print("GONNA CHECK IF I CAN APPEND STORE ",
              # target_store0, "TO WAREHOUSE ", target_warehouse[1])
         if war_cap[target_warehouse[1]] >= sum(cli_dem[route[target_warehouse[1]]])+cli_dem[target_store0]:
             #print("IT IS POSSIBLE, GONNA CHANGE AND ORDER IT")
-            store = new_route[target_warehouse[0]].pop(index_s0)
-            new_route[target_warehouse[1]].append(store)
-            new_route[target_warehouse[0]] = check_order(
-                new_route[target_warehouse[0]], war_arr[target_warehouse[0]], cli_arr)
-            new_route[target_warehouse[1]] = check_order(
-                new_route[target_warehouse[1]], war_arr[target_warehouse[1]], cli_arr)
+            store = new_route[target_warehouse[0]].pop(index_s0) ##pop store from warehouse - index s0
+            new_route[target_warehouse[1]].append(store) ##append it to warehouse - index s1
+            ## Re-order both warehouses routes based on the smallest distance
+            new_route[target_warehouse[0]] = check_order(new_route[target_warehouse[0]], war_arr[target_warehouse[0]], cli_arr)
+            new_route[target_warehouse[1]] = check_order(new_route[target_warehouse[1]], war_arr[target_warehouse[1]], cli_arr)
             return new_route
         else:
+            print("No capacity")
             return 0
     else:
+        print("Empty")
         return 0
 
 
@@ -144,7 +143,7 @@ def swap_stores(warehouse1, warehouse2, store_pos1, store_pos2, cli_dem, war_cap
 
     if ((war_cap[warehouse1] - sum(cli_dem[route[warehouse1]]) - cli_dem[route[warehouse2][store_pos2]] + cli_dem[route[warehouse1][store_pos1]]) >= 0 and
             (war_cap[warehouse2] - sum(cli_dem[route[warehouse2]]) - cli_dem[route[warehouse1][store_pos1]] + cli_dem[route[warehouse2][store_pos2]]) >= 0):
-        #Swap is good
+        #Swap is good based on the 
         swapper = route[warehouse1][store_pos1]
         route[warehouse1][store_pos1] = route[warehouse2][store_pos2]
         route[warehouse2][store_pos2] = swapper
@@ -353,7 +352,7 @@ print("Initial cost is " + str(initial_cost))
 #model = ga(function = get_total_cost,dimension=86,variable_boundaries=ga_routes)
 
 
-final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr)
+final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr,0.166,10)
 
 final_cost = get_total_cost(final_routes, cli_arr, war_arr)
 
@@ -363,5 +362,6 @@ end = timer()
 print("Time elapsed: " + str(end - start))
 
 print(get_free_space(routes, war_cap, cli_dem))
+
 print(final_routes)
 
