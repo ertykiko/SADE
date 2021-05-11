@@ -4,7 +4,7 @@ import random
 import math
 import copy
 from timeit import default_timer as timer
-from geneticalgorithm import geneticalgorithm as ga
+#from geneticalgorithm import geneticalgorithm as ga
 
 
 ###-----Simulated Annealing
