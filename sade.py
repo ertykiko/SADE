@@ -11,9 +11,9 @@ from timeit import default_timer as timer
 
 def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr,probabilty,magnitude):
     """Peforms simulated annealing to find a solution"""
-    initial_temp = 150
+    initial_temp = 50
     final_temp = 1
-    alpha = 0.005
+    alpha = 0.01
     #k=1.380649*(10**-23)
     current_temp = initial_temp
 
@@ -353,7 +353,7 @@ print("Initial cost is " + str(initial_cost))
 #model = ga(function = get_total_cost,dimension=86,variable_boundaries=ga_routes)
 
 
-final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr,0.7,50)
+final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr,0.2,10)
 
 final_cost = get_total_cost(final_routes, cli_arr, war_arr)
 
