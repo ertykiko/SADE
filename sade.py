@@ -11,7 +11,7 @@ from timeit import default_timer as timer
 
 def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr,probabilty,magnitude):
     """Peforms simulated annealing to find a solution"""
-    initial_temp = 50
+    initial_temp = 800
     final_temp = 1
     alpha = 0.01
     #k=1.380649*(10**-23)
@@ -28,7 +28,6 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr,probab
 
 
     while current_temp > final_temp:
-        #print("------------------------------------------------------------------------------------------------------------")
         
         ##Random number from 0-# to select swap or append
         rand_func = np.random.randint(0, np.around(1/probabilty,decimals=0))
@@ -45,9 +44,6 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr,probab
             # Check if neighbor is best so far
             
             cost_diff = get_total_cost(neighbor, cli_arr, war_arr) - get_total_cost(solution, cli_arr, war_arr)
-
-            #print("------------------------COST DIFF: ", cost_diff)
-            #print("Neighbor cost is : " +    str(get_total_cost(neighbor, cli_arr, war_arr)))
 
             # if the new solution is better, accept it
             if cost_diff <= 0:
@@ -131,10 +127,10 @@ def get_neighbors_random_append(route, cli_dem, war_cap, war_arr, cli_arr):
             new_route[target_warehouse[1]] = check_order(new_route[target_warehouse[1]], war_arr[target_warehouse[1]], cli_arr)
             return new_route
         else:
-            print("No capacity")
+            #print("No capacity")
             return 0
     else:
-        print("Empty")
+        #print("Empty")
         return 0
 
 
@@ -319,8 +315,6 @@ def initialize_routes(routes, war_arr, cli_arr, cli_dem, war_cap):
             break  # No more stores to assign --> end of iterations
         print(routes)
 
-def convert_to_bitstring(routes):
-    raise NotImplementedError
 
 ##----Import data from CSV----##
 start = timer()
@@ -348,12 +342,9 @@ initial_cost = get_total_cost(routes, cli_arr, war_arr)
 
 print("Initial cost is " + str(initial_cost))
 
-###Get initial solution in a 86 position vector 
-#ga_routes = [[] for i in range(0, 16)]
-#model = ga(function = get_total_cost,dimension=86,variable_boundaries=ga_routes)
+## last parameters -- prob and magnitude 
 
-
-final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr,0.2,10)
+final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr,0.4,1)
 
 final_cost = get_total_cost(final_routes, cli_arr, war_arr)
 
