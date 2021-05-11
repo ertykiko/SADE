@@ -64,7 +64,7 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr,probab
                 mathio = math.exp(-cost_diff*magnitude / current_temp)
                 
 
-                if rand < mathio and cost_diff < 200:
+                if rand < mathio :
 
                     print("Accepting Worse Solution")
                     bad += 1
@@ -79,7 +79,8 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr,probab
     print("Finished Simulated Annealing")
     print("Number of iterations : " + str(iteration) +
           "| Number of bad accepts : " + str(bad) )
-
+    print("Initial Temp : " + str(initial_temp) +
+          "| alpha : " + str(alpha) + "| Magnitude : " + str(magnitude) + " | Probability of Append : "+ str(probabilty))
     return solution
 
 
@@ -352,7 +353,7 @@ print("Initial cost is " + str(initial_cost))
 #model = ga(function = get_total_cost,dimension=86,variable_boundaries=ga_routes)
 
 
-final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr,0.166,10)
+final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr,0.2,10)
 
 final_cost = get_total_cost(final_routes, cli_arr, war_arr)
 
