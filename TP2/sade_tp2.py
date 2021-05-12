@@ -6,12 +6,12 @@ sns.set_style('whitegrid')
 
 
 prod_avg = 100
-prod_std_dev = 30
+prod_std_dev = np.sqrt(30)
 
 cli_avg = 90
-cli_std_dev = 25
+cli_std_dev = 5
 
-num_reps = 500
+num_reps = 10000
 #num_simulations = 1000
 
 
