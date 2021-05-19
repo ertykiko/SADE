@@ -11,9 +11,9 @@ from timeit import default_timer as timer
 
 def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr,probabilty,magnitude):
     """Peforms simulated annealing to find a solution"""
-    initial_temp = 800
+    initial_temp = 100
     final_temp = 1
-    alpha = 0.01
+    alpha = 0.005
     #k=1.380649*(10**-23)
     current_temp = initial_temp
 
@@ -78,10 +78,6 @@ def simulated_annealing(initial_route, cli_arr, cli_dem, war_cap, war_arr,probab
     print("Initial Temp : " + str(initial_temp) +
           "| alpha : " + str(alpha) + "| Magnitude : " + str(magnitude) + " | Probability of Append : "+ str(probabilty))
     return solution
-
-
-def get_cost_ga(bitstring, cli_dem, war_cap, war_arr, cli_arr):
-    raise NotImplemented
 
 
 def get_neighbors_random_swap(route, cli_dem, war_cap, war_arr, cli_arr):
@@ -154,48 +150,40 @@ def get_total_cost(routes, cli_arr, war_arr):
     cost = 0
     for warehouse in range(len(routes)):
         for client in range(len(routes[warehouse])):
-            if len(routes[warehouse]) == client+1:
-
+            if (len(routes[warehouse]) == client + 1):
                 #is the last store
-                #calculate cost from last shop to the warehouse
-                #print("CALCULATE DISTANCE FROM CLIENT:",
-                #      client, 'TO CLIENT:', client-1)
-                #print(get_distance(
-                #    cli_arr[routes[warehouse][client]], cli_arr[routes[warehouse][client-1]]))
-                cost = cost + \
-                    get_distance(cli_arr[routes[warehouse][client]],
-                                 cli_arr[routes[warehouse][client-1]])
-                #print("CALCULATE DISTANCE FROM CLIENT:",
-                #      client, 'WAREHOUSE:', warehouse)
-                #print(get_distance(
-                #    cli_arr[routes[warehouse][client]], war_arr[warehouse]))
+                
+                if (len(routes[warehouse]) == 1):
+                    #if there is only one store calculate it like this 
+                    cost = cost + \
+                        get_distance(cli_arr[routes[warehouse]
+                                             [client]], war_arr[warehouse])
+                else:
+                    #normal warehouse have more than one warehouse
+                    cost = cost + \
+                        get_distance(cli_arr[routes[warehouse][client]],
+                                    cli_arr[routes[warehouse][client-1]])
                 cost = cost + \
                     get_distance(cli_arr[routes[warehouse]
                                  [client]], war_arr[warehouse])
-                # print("Reached the end of the warehouse" + str(warehouse))
+                
                 break
 
             if client == 0:
                 #first store calculate to warehouse
-                #calculate storage to 1st store
-                #print("CALCULATE DISTANCE FROM WAREHOUSE:",
-                #      warehouse, 'TO CLIENT:', client)
-                #print(get_distance(war_arr[warehouse],
-                #      cli_arr[routes[warehouse][client]]))
+                
                 cost = cost + \
                     get_distance(war_arr[warehouse],
                                  cli_arr[routes[warehouse][client]])
+
+                
             else:
-                #print("CALCULATE DISTANCE FROM CLIENT:",
-                #      client, 'TO CLIENT:', client-1)
-                #print(get_distance(
-                #    cli_arr[routes[warehouse][client]], cli_arr[routes[warehouse][client-1]]))
+                #Any other store 
                 cost = cost + \
                     get_distance(cli_arr[routes[warehouse][client]],
                                  cli_arr[routes[warehouse][client-1]])
-                #cost =+ calculate_cost_between_stores
+                
 
-    # print("Time elapsed: " + str(end - start))
     return cost
 
 
@@ -216,6 +204,7 @@ def check_routes(routes):
 
 def get_free_space(routes, war_cap, cli_dem):
     free_space = np.array([])
+    print("Free Space : ")
     for x in range(16):
         #print(war_cap[x]-sum(cli_dem[routes[x]]))
         free_space = np.append(
@@ -274,10 +263,10 @@ def initialize_routes(routes, war_arr, cli_arr, cli_dem, war_cap):
         x = np.unravel_index(dist_w_s.argmin(), dist_w_s.shape)[0]
         # Y (Store) index of the best solution of all possibilities
         y = np.unravel_index(dist_w_s.argmin(), dist_w_s.shape)[1]
-        print("Best possibility is store: ",
-              vector_stores[y], "   to warehouse:", x+1, '-----> Dist:', np.min(dist_w_s))
-        print('Checking store ', y, 'with demand ', cli_dem[vector_stores[y]], 'to append on warehouse ', x, 'with capacity ', war_cap_array[x], 'and the sum of stores: ', sum(
-            cli_dem[routes[x]]), 'therefore free:', war_cap_array[x]-sum(cli_dem[routes[x]]))
+        #print("Best possibility is store: ",
+        #      vector_stores[y], "   to warehouse:", x+1, '-----> Dist:', np.min(dist_w_s))
+        #print('Checking store ', y, 'with demand ', cli_dem[vector_stores[y]], 'to append on warehouse ', x, 'with capacity ', war_cap_array[x], 'and the sum of stores: ', sum(
+        #    cli_dem[routes[x]]), 'therefore free:', war_cap_array[x]-sum(cli_dem[routes[x]]))
 
         # If there is not a best solution that fits the Warehouses exits loop
         if np.all(dist_w_s == dist_w_s[0, 0]) == 1:
@@ -307,13 +296,13 @@ def initialize_routes(routes, war_arr, cli_arr, cli_dem, war_cap):
             recalculate_distances = True
         else:
             # Capacity doesn't allow to assign Store
-            print('Not enough capacity')
+            #print('Not enough capacity')
             recalculate_distances = False
             dist_w_s[x][y] = 10000  # Go find next best solution
 
         if free_stores == 0:
             break  # No more stores to assign --> end of iterations
-        print(routes)
+        #print(routes)
 
 
 ##----Import data from CSV----##
@@ -344,7 +333,7 @@ print("Initial cost is " + str(initial_cost))
 
 ## last parameters -- prob and magnitude 
 
-final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr,0.4,1)
+final_routes = simulated_annealing(routes, cli_arr, cli_dem, war_cap, war_arr,0.2,30)
 
 final_cost = get_total_cost(final_routes, cli_arr, war_arr)
 
@@ -354,6 +343,6 @@ end = timer()
 print("Time elapsed: " + str(end - start))
 
 print(get_free_space(routes, war_cap, cli_dem))
-
-print(final_routes)
+print("Final Route is : ")
+check_routes(final_routes)
 
